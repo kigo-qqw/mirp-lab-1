@@ -52,5 +52,4 @@ jobs:
 
       - name: Test
         run: |
-          cd $BUILD_DIR
-          ctest --output-on-failure
+          ctest --test-dir $BUILD_DIR
