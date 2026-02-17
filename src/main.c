@@ -28,44 +28,8 @@
  * считается полностью занятым, пока на нем находится хотя бы один вагон поезда.
  */
 
-#include <errno.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "parser.h"
 #include "topology.h"
-
-void PrintTopology(const RailwaySystemTopology *Topology) {
-  printf("Nodes (%zu):\n", Vector_Size(Topology->Nodes));
-  for (int i = 0; i < Vector_Size(Topology->Nodes); ++i) {
-    const Node *N = Vector_At(Topology->Nodes, i);
-    printf("  Node %zu, connected to %zu edges: ", N->Id,
-           Vector_Size(N->Edges));
-    // for (int j = 0; j < N->EdgeCount; ++j) {
-    //     Edge *E = N->Edges[j];
-    //     Node *Other = (E->A == N) ? E->B : E->A;
-    //     printf("%d ", Other->Id);
-    // }
-    printf("\n");
-  }
-
-  printf("Edges (%zu):\n", Vector_Size(Topology->Edges));
-  for (int i = 0; i < Vector_Size(Topology->Edges); ++i) {
-    const Edge *E = Vector_At(Topology->Edges, i);
-    printf("  Edge %zu connects Node %zu <-> Node %zu\n", E->Id, E->A->Id,
-           E->B->Id);
-  }
-
-  printf("Railways (%zu):\n", Vector_Size(Topology->Railways));
-  for (int i = 0; i < Vector_Size(Topology->Railways); ++i) {
-    const Railway *R = Vector_At(Topology->Railways, i);
-    printf("  Railway %zu connected to Node %zu\n", R->Id,
-           R->ConnectedNode->Id);
-  }
-}
 
 int main(const int argc, const char *const *const argv) {
   RailwaySystemTopology Topology;
@@ -76,9 +40,8 @@ int main(const int argc, const char *const *const argv) {
     return 1;
   }
 
-  puts(TO_STRING_IDENTIFIER(Node)(Vector_At(Topology.Nodes, 0)));
-
-  puts(TO_STRING_IDENTIFIER(RailwaySystemTopology)(&Topology));
+  String S = TO_STRING(RailwaySystemTopology)(&Topology);
+  puts(S);
 
   RAII_Destroy_IDENTIFIER(RailwaySystemTopology)(&Topology);
 

@@ -50,8 +50,8 @@
   } while (0)
 
 char *Vector_ToString_Generic(const void *Data, usize Size, usize ElementSize,
-                              const char *(*ElementToString)(const void *));
+                              const char *(*ToString)(const void *));
 
-#define Vector_ToString(V, ETS)                                    \
+#define Vector_ToString(V, ETS)                                                \
   Vector_ToString_Generic((V).Data, (V).Size, sizeof(*(V).Data),               \
-                          ((ElementToString)(ETS)))
+                          ((ToString)(ETS)))

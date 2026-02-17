@@ -15,35 +15,23 @@ Node *FindNodeById(const NodeVector Nodes, const usize Id) {
 
 const char *NullToString() { return strdup("null"); }
 
-#define TO_STRING_DEFINITION(T, FMT, ...)                                      \
-  const char *TO_STRING_IDENTIFIER(T)(const void *const Self) {                \
-    const T *const T = Self;                                                  \
-    if (!T)                                                                    \
-      return NullToString();                                                   \
-    char *Buffer = NULL;                                                       \
-    usize BufferSize = 0;                                                      \
-                                                                               \
-    while (true) {                                                             \
-      BufferSize = snprintf(Buffer, BufferSize, FMT, ##__VA_ARGS__) + 1;       \
-      if (Buffer)                                                              \
-        return Buffer;                                                         \
-      Buffer = malloc(BufferSize);                                             \
-    }                                                                          \
-  }
-
-TO_STRING_DEFINITION(Node, "Node{Id=%zu}", Node->Id)
-TO_STRING_DEFINITION(Edge, "Edge{Id=%zu, A=%s, B=%s}", Edge->Id,
-                     NodeToString(Edge->A), NodeToString(Edge->B))
-TO_STRING_DEFINITION(Railway, "Railway{Id=%zu, ConnectedNode=%s}", Railway->Id,
-                     NodeToString(Railway->ConnectedNode))
-TO_STRING_DEFINITION(RailwaySystemTopology,
-                     "RailwaySystemTopology{Nodes=%s, Edges=%s, Railways=%s}",
-                     Vector_ToString(RailwaySystemTopology->Nodes,
-                                     TO_STRING_IDENTIFIER(Node)),
-                     Vector_ToString(RailwaySystemTopology->Edges,
-                                     TO_STRING_IDENTIFIER(Edge)),
-                     Vector_ToString(RailwaySystemTopology->Railways,
-                                     TO_STRING_IDENTIFIER(Railway)))
+TO_STRING_DEFINITION(Node, {}, "Node{Id=%zu}", Node->Id)
+TO_STRING_DEFINITION(Edge, String NodeA = NodeToString(Edge->A);
+                     String NodeB = TO_STRING(Node)(Edge->B),
+                     "Edge{Id=%zu, A=%s, B=%s}", Edge->Id, NodeA, NodeB);
+TO_STRING_DEFINITION(
+    Railway, String ConnectedNode = TO_STRING(Node)(Railway->ConnectedNode),
+    "Railway{Id=%zu, ConnectedNode=%s}", Railway->Id, ConnectedNode);
+TO_STRING_DEFINITION(
+    RailwaySystemTopology,
+    String NodesAsString = Vector_ToString(RailwaySystemTopology->Nodes,
+                                           TO_STRING(Node));
+    String EdgesAsString = Vector_ToString(RailwaySystemTopology->Edges,
+                                           TO_STRING(Edge));
+    String RailwaysAsString = Vector_ToString(RailwaySystemTopology->Railways,
+                                              TO_STRING(Railway)),
+    "RailwaySystemTopology{Nodes=%s, Edges=%s, Railways=%s}", NodesAsString,
+    EdgesAsString, RailwaysAsString)
 
 #define new(T) ((T *)malloc(sizeof(T)))
 

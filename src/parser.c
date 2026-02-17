@@ -79,6 +79,12 @@ typedef struct ParseRailwaySystemTopologyState {
   }                                                                            \
   StrStart = StrEnd
 
+#define PARSE_LABEL_HEADER(HEADER)                                             \
+  static const char HEADER[] = #HEADER;                                        \
+  static const size_t HEADER##_LENGTH = sizeof(HEADER) - 1;                    \
+  StrStart = StrStart + HEADER##_LENGTH;                                       \
+  if (strncmp(HEADER, StrStart - HEADER##_LENGTH, HEADER##_LENGTH) == 0)
+
 ParseRailwaySystemTopologyResult
 ParseRailwaySystemTopology(const char *const TopologyFilename,
                            RailwaySystemTopology *Topology) {
@@ -109,16 +115,14 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       goto Success;
     }
     case ParseRailwaySystemTopologyStateType_ReadNodesLabel: {
-      static const char NODES[] = "NODES";
-      static const size_t NODES_LENGTH = sizeof(NODES) - 1;
-      if (strncmp(NODES, StrStart, NODES_LENGTH) == 0) {
-        StrStart = StrStart + NODES_LENGTH;
+      PARSE_LABEL_HEADER(NODES) {
         PARSE_UNSIGNED_INTEGER(R);
         State.NodeData.Count = R.Value;
         Vector_InitWithCapacity(Topology->Nodes, State.NodeData.Count);
 
         State.Type = ParseRailwaySystemTopologyStateType_ReadNode;
-      } else {
+      }
+      else {
         State.Type = ParseRailwaySystemTopologyStateType_Error;
       }
       break;
@@ -130,9 +134,11 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       Vector_Push(Topology->Nodes, N);
 
 #ifndef NDEBUG
-      puts(TO_STRING_IDENTIFIER(Node)(
-          Vector_At(Topology->Nodes, Vector_Size(Topology->Nodes) - 1)));
-      puts(Vector_ToString(Topology->Nodes, TO_STRING_IDENTIFIER(Node)));
+      String NodeAsString = TO_STRING(Node)(
+          Vector_At(Topology->Nodes, Vector_Size(Topology->Nodes) - 1));
+      puts(NodeAsString);
+      String NodesAsString = Vector_ToString(Topology->Nodes, TO_STRING(Node));
+      puts(NodesAsString);
 #endif
 
       State.Type = Vector_Size(Topology->Nodes) >= State.NodeData.Count
@@ -142,16 +148,14 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       break;
     }
     case ParseRailwaySystemTopologyStateType_ReadRailwaysLabel: {
-      static const char ROADS[] = "ROADS";
-      static const size_t ROADS_LENGTH = sizeof(ROADS) - 1;
-      if (strncmp(ROADS, StrStart, ROADS_LENGTH) == 0) {
-        StrStart = StrStart + ROADS_LENGTH;
+      PARSE_LABEL_HEADER(ROADS) {
         PARSE_UNSIGNED_INTEGER(R);
         State.RailwayData.Count = R.Value;
         Vector_InitWithCapacity(Topology->Railways, State.RailwayData.Count);
 
         State.Type = ParseRailwaySystemTopologyStateType_ReadRailway;
-      } else {
+      }
+      else {
         State.Type = ParseRailwaySystemTopologyStateType_Error;
       }
       break;
@@ -172,8 +176,9 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       Vector_Push(Topology->Railways, R);
 
 #ifndef NDEBUG
-      puts(TO_STRING_IDENTIFIER(Railway)(
-          Vector_At(Topology->Railways, Vector_Size(Topology->Railways) - 1)));
+      String RailwayAsString = TO_STRING(Railway)(
+          Vector_At(Topology->Railways, Vector_Size(Topology->Railways) - 1));
+      puts(RailwayAsString);
 #endif
 
       State.Type = Vector_Size(Topology->Railways) >= State.RailwayData.Count
@@ -183,16 +188,14 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       break;
     }
     case ParseRailwaySystemTopologyStateType_ReadEdgesLabel: {
-      static const char EDGES[] = "EDGES";
-      static const size_t EDGES_LENGTH = sizeof(EDGES) - 1;
-      if (strncmp(EDGES, StrStart, EDGES_LENGTH) == 0) {
-        StrStart = StrStart + EDGES_LENGTH;
+      PARSE_LABEL_HEADER(EDGES) {
         PARSE_UNSIGNED_INTEGER(R);
         State.EdgeData.Count = R.Value;
         Vector_InitWithCapacity(Topology->Edges, State.EdgeData.Count);
 
         State.Type = ParseRailwaySystemTopologyStateType_ReadEdge;
-      } else {
+      }
+      else {
         State.Type = ParseRailwaySystemTopologyStateType_Error;
       }
       break;
@@ -219,8 +222,9 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       Vector_Push(Topology->Edges, E);
 
 #ifndef NDEBUG
-      puts(TO_STRING_IDENTIFIER(Edge)(
-          Vector_At(Topology->Edges, Vector_Size(Topology->Edges) - 1)));
+      String EdgeAsString = TO_STRING(Edge)(
+          Vector_At(Topology->Edges, Vector_Size(Topology->Edges) - 1));
+      puts(EdgeAsString);
 #endif
 
       State.Type = Vector_Size(Topology->Edges) >= State.EdgeData.Count
@@ -232,12 +236,16 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
     }
   }
 
-  // TODO: set edges in Nodes
+  for (size_t i = 0; i < Vector_Size(Topology->Edges); ++i) {
+    Edge *E = Vector_At(Topology->Edges, i);
+    Vector_Push(E->A->Edges, E);
+    Vector_Push(E->B->Edges, E);
+  }
 
   goto Success;
 
 Failure:
-  // TODO cleanup allocated memory
+  RAII_Destroy_IDENTIFIER(RailwaySystemTopology)(Topology);
 Success:
   fclose(F);
 

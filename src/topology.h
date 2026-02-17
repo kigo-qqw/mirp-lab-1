@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "vector.h"
+#include "to_string.h"
 
 typedef struct Node Node;
 typedef struct Edge Edge;
@@ -34,11 +35,6 @@ struct RailwaySystemTopology {
 };
 
 Node *FindNodeById(NodeVector Nodes, usize Id);
-
-#define TO_STRING_IDENTIFIER(T) T##ToString
-#define TO_STRING_DECL(T) const char *TO_STRING_IDENTIFIER(T)(const void *)
-
-typedef const char *(*ElementToString)(const void *);
 
 const char *NullToString();
 
