@@ -20,7 +20,13 @@ if (ENABLE_SANITIZERS)
 endif ()
 
 add_executable(mirp-lab-1)
-target_sources(mirp-lab-1 PRIVATE src/vector.c src/topology.c src/parser.c src/main.c)
+target_sources(mirp-lab-1 PRIVATE
+        src/to_string.c
+        src/vector.c
+        src/topology.c
+        src/parser.c
+        src/main.c
+)
 
 enable_testing()
 

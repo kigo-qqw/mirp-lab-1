@@ -130,7 +130,7 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
     case ParseRailwaySystemTopologyStateType_ReadNode: {
       PARSE_UNSIGNED_INTEGER(NodeIdResult);
 
-      Node *N = RAII_New_IDENTIFIER(Node)(NodeIdResult.Value);
+      Node *N = RAII_New(Node)(NodeIdResult.Value);
       Vector_Push(Topology->Nodes, N);
 
 #ifndef NDEBUG
@@ -171,8 +171,7 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
         printf("Error: Node %llu is not defined\n", RailwayNodeResult.Value);
         break;
       }
-      Railway *R =
-          RAII_New_IDENTIFIER(Railway)(RailwayIdResult.Value, ConnectedNode);
+      Railway *R = RAII_New(Railway)(RailwayIdResult.Value, ConnectedNode);
       Vector_Push(Topology->Railways, R);
 
 #ifndef NDEBUG
@@ -218,7 +217,7 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
         break;
       }
 
-      Edge *E = RAII_New_IDENTIFIER(Edge)(EdgeIdResult.Value, A, B);
+      Edge *E = RAII_New(Edge)(EdgeIdResult.Value, A, B);
       Vector_Push(Topology->Edges, E);
 
 #ifndef NDEBUG
@@ -245,7 +244,7 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
   goto Success;
 
 Failure:
-  RAII_Destroy_IDENTIFIER(RailwaySystemTopology)(Topology);
+  RAII_Destroy(RailwaySystemTopology)(Topology);
 Success:
   fclose(F);
 

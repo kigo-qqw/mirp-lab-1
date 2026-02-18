@@ -2,8 +2,9 @@
 
 #include <stddef.h>
 
-#include "vector.h"
+#include "raii.h"
 #include "to_string.h"
+#include "vector.h"
 
 typedef struct Node Node;
 typedef struct Edge Edge;
@@ -36,29 +37,10 @@ struct RailwaySystemTopology {
 
 Node *FindNodeById(NodeVector Nodes, usize Id);
 
-const char *NullToString();
-
 TO_STRING_DECL(Node);
 TO_STRING_DECL(Edge);
 TO_STRING_DECL(Railway);
 TO_STRING_DECL(RailwaySystemTopology);
-
-#define RAII_New_IDENTIFIER(T) T##_New
-#define RAII_Init_IDENTIFIER(T) T##_Init
-#define RAII_Destroy_IDENTIFIER(T) T##_Destroy
-#define RAII_Free_IDENTIFIER(T) T##_Free
-
-#define RAII_New_DECL(T, ...) T *RAII_New_IDENTIFIER(T)(__VA_ARGS__)
-#define RAII_Init_DECL(T, ...)                                                 \
-  void RAII_Init_IDENTIFIER(T)(T * Self, ##__VA_ARGS__)
-#define RAII_Destroy_DECL(T) void RAII_Destroy_IDENTIFIER(T)(T * Self)
-#define RAII_Free_DECL(T) void RAII_Free_IDENTIFIER(T)(T * Self)
-
-#define RAII_DECL(T, ...)                                                      \
-  RAII_New_DECL(T, ##__VA_ARGS__);                                             \
-  RAII_Init_DECL(T, ##__VA_ARGS__);                                            \
-  RAII_Destroy_DECL(T);                                                        \
-  RAII_Free_DECL(T);
 
 RAII_DECL(Node, usize Id);
 RAII_DECL(Edge, usize Id, Node *A, Node *B);

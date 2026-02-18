@@ -43,7 +43,7 @@ int main(const int argc, const char *const *const argv) {
   String S = TO_STRING(RailwaySystemTopology)(&Topology);
   puts(S);
 
-  RAII_Destroy_IDENTIFIER(RailwaySystemTopology)(&Topology);
+  RAII_Destroy(RailwaySystemTopology)(&Topology);
 
   return 0;
 }
