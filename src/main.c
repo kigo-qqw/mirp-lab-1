@@ -33,15 +33,34 @@
 #include "topology.h"
 #include "types.h"
 
+#ifndef VERSION
+#error Provide VERSION as -DVERSION="<version>"
+#endif
+
 #define btoa(x) ((x) ? "true" : "false")
 
-i32 main(const i32 argc, const c8 *const *const argv) {
+i32 main(const i32 Argc, const c8 *const *const Argv) {
+  CommandLineArguments Args;
+  const CommandLineArgumentsParseResult CliParseResult =
+      CommandLineArguments_Parse(&Args, Argc, Argv);
+
+  if (Args.Usage) {
+    Usage(Argv[0], ExitStatus_SUCCESS);
+  }
+  if (Args.Version) {
+    printf("mirp-lab-1 %s\n", VERSION);
+    exit(ExitStatus_SUCCESS);
+  }
+  if (CliParseResult != CommandLineArgumentsParseResult_SUCCESS) {
+    Usage(Argv[0], ExitStatus_FAILURE);
+  }
+
   RailwaySystemTopology Topology;
   const ParseRailwaySystemTopologyResult ParseResult =
-      ParseRailwaySystemTopology(argv[1], &Topology);
+      ParseRailwaySystemTopology(Args.TopologyFilePath, &Topology);
 
   if (ParseResult == ParseRailwaySystemTopologyResult_Failure) {
-    return 1;
+    return ExitStatus_FAILURE;
   }
 
   String S = TO_STRING(RailwaySystemTopology)(&Topology);

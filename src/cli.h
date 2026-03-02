@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include "types.h"
 
 typedef enum ExitStatus {
@@ -7,15 +9,21 @@ typedef enum ExitStatus {
   ExitStatus_FAILURE = 1,
 } ExitStatus;
 
-typedef enum CommandLineArgumentsParseStatus {
+typedef enum CommandLineArgumentsParseResult {
   // TODO: parse errors, invalid argument, unknown argument, etc.
-  CommandLineArgumentsParseStatus_SUCCESS = 0,
-} CommandLineArgumentsParseStatus;
+  CommandLineArgumentsParseResult_NO_POSITION_ARGUMENT = -2,
+  CommandLineArgumentsParseResult_UNKNOWN_ARGUMENT = -1,
+  CommandLineArgumentsParseResult_SUCCESS = 0,
+} CommandLineArgumentsParseResult;
 
 typedef struct CommandLineArguments {
-  const char *const TopologyFilePath;
+  const char *TopologyFilePath;
+  bool Usage;
+  bool Version;
 } CommandLineArguments;
 
-CommandLineArgumentsParseStatus
-CommandLineArguments_Parse(CommandLineArguments *Self, i32 argc,
-                           const c8 *const *argv);
+void Usage(const c8 *ProgramName, ExitStatus Status);
+
+CommandLineArgumentsParseResult
+CommandLineArguments_Parse(CommandLineArguments *Self, i32 Argc,
+                           const c8 *const *Argv);

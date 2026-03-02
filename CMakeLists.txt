@@ -19,6 +19,13 @@ if (ENABLE_SANITIZERS)
     endif ()
 endif ()
 
+execute_process(
+        COMMAND git log -1 --format=%H
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        OUTPUT_VARIABLE GIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 add_executable(mirp-lab-1)
 target_sources(mirp-lab-1 PRIVATE
         src/to_string.c
@@ -41,6 +48,8 @@ target_compile_options(mirp-lab-1 PRIVATE
         -Wno-implicit-void-ptr-cast
         -Wno-switch-default
 )
+
+target_compile_definitions(mirp-lab-1 PRIVATE VERSION="${GIT_HASH}")
 
 enable_testing()
 
