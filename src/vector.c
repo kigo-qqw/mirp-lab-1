@@ -30,17 +30,18 @@ char *Vector_ToString_Generic(const void *Data, const usize Size,
     TotalBufferSize += strlen(ElementsAsStrings[i]);
   }
 
-  char *const Buffer = malloc(TotalBufferSize);
+  c8 *const Buffer = malloc(TotalBufferSize);
   usize Length = 0;
-  Length += snprintf(Buffer + Length, TotalBufferSize - Length, LEFT_BRACE);
+  Length +=
+      (usize)snprintf(Buffer + Length, TotalBufferSize - Length, LEFT_BRACE);
 
   for (usize i = 0; i < Size; ++i) {
     if (i > 0)
-      Length += snprintf(Buffer + Length, TotalBufferSize - Length,
-                         ELEMENT_DELIMITER);
+      Length += (usize)snprintf(Buffer + Length, TotalBufferSize - Length,
+                                ELEMENT_DELIMITER);
 
-    Length += snprintf(Buffer + Length, TotalBufferSize - Length, "%s",
-                       ElementsAsStrings[i]);
+    Length += (usize)snprintf(Buffer + Length, TotalBufferSize - Length, "%s",
+                              ElementsAsStrings[i]);
     free((void *)ElementsAsStrings[i]);
   }
   snprintf(Buffer + Length, TotalBufferSize - Length, RIGHT_BRACE);

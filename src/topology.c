@@ -7,8 +7,8 @@
 #include "raii_impl.h"
 #include "to_string_impl.h"
 
-Node *FindNodeById(const NodeVector Nodes, const usize Id) {
-  for (int i = 0; i < Vector_Size(Nodes); ++i) {
+Node *FindNodeById(const NodeVector Nodes, const u64 Id) {
+  for (usize i = 0; i < Vector_Size(Nodes); ++i) {
     if (Vector_At(Nodes, i)->Id == Id) {
       return Vector_At(Nodes, i);
     }
@@ -34,46 +34,46 @@ TO_STRING_DEFINITION(
     "RailwaySystemTopology{Nodes=%s, Edges=%s, Railways=%s}", NodesAsString,
     EdgesAsString, RailwaysAsString)
 
-RAII_New_DECL(Node, const usize Id) {
+RAII_New_DECL(Node, const u64 Id) {
   Node *Self = new(Node);
   RAII_Init(Node)(Self, Id);
   return Self;
 }
-RAII_Init_DECL(Node, const usize Id) {
+RAII_Init_DECL(Node, const u64 Id) {
   Self->Id = Id;
   Vector_Init(Self->Edges); // TODO
 }
 RAII_Destroy_DECL(Node) { Vector_Destroy(Self->Edges); }
 
-RAII_New_DECL(Edge, const usize Id, Node *A, Node *B) {
+RAII_New_DECL(Edge, const u64 Id, Node *A, Node *B) {
   Edge *Self = new(Edge);
   RAII_Init(Edge)(Self, Id, A, B);
   return Self;
 }
-RAII_Init_DECL(Edge, const usize Id, Node *A, Node *B) {
+RAII_Init_DECL(Edge, const u64 Id, Node *A, Node *B) {
   Self->Id = Id;
   Self->A = A;
   Self->B = B;
 }
-RAII_Destroy_DECL(Edge) {}
+RAII_Destroy_DECL(Edge) { (void)Self; }
 
-RAII_New_DECL(Railway, const usize Id, Node *ConnectedNode) {
+RAII_New_DECL(Railway, const u64 Id, Node *ConnectedNode) {
   Railway *Self = new(Railway);
   RAII_Init(Railway)(Self, Id, ConnectedNode);
   return Self;
 }
-RAII_Init_DECL(Railway, const usize Id, Node *ConnectedNode) {
+RAII_Init_DECL(Railway, const u64 Id, Node *ConnectedNode) {
   Self->Id = Id;
   Self->ConnectedNode = ConnectedNode;
 }
-RAII_Destroy_DECL(Railway) {}
+RAII_Destroy_DECL(Railway) { (void)Self; }
 
 RAII_New_DECL(RailwaySystemTopology) {
   RailwaySystemTopology *Self = new(RailwaySystemTopology);
   RAII_Init(RailwaySystemTopology)(Self);
   return Self;
 }
-RAII_Init_DECL(RailwaySystemTopology) {}
+RAII_Init_DECL(RailwaySystemTopology) { (void)Self; }
 RAII_Destroy_DECL(RailwaySystemTopology) {
   for (usize i = 0; i < Vector_Size(Self->Nodes); ++i)
     RAII_Free(Node)(Vector_At(Self->Nodes, i));
@@ -102,9 +102,9 @@ bool RailwaySystemTopology_IsFullyConnected(
   if (Vector_Empty(Self->Nodes))
     return false;
 
-  Vector(Node *) Visited;
+  Vector(const Node *) Visited;
   Vector_Init(Visited);
-  Vector(Node *) Queue;
+  Vector(const Node *) Queue;
   Vector_Init(Queue);
 
   const Node *StartNode = Vector_At(Self->Railways, 0)->ConnectedNode;

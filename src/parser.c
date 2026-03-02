@@ -8,21 +8,21 @@
 
 #include "topology.h"
 
-const char *SkipSpaces(const char *Str) {
+static const c8 *SkipSpaces(const c8 *Str) {
   while (*Str == ' ' || *Str == '\t')
     Str++;
   return Str;
 }
 
 typedef struct ParseUnsignedIntegerResult {
-  unsigned long long Value;
+  u64 Value;
   bool Success;
 } ParseUnsignedIntegerResult;
 
 static ParseUnsignedIntegerResult
-ParseUnsignedInteger(const char *Str, const char **const StrEnd) {
+ParseUnsignedInteger(const c8 *Str, const c8 **const StrEnd) {
   Str = SkipSpaces(Str);
-  char *EndPtr = NULL;
+  c8 *EndPtr = NULL;
 
   ParseUnsignedIntegerResult Result = {strtoull(Str, &EndPtr, 10), true};
 
@@ -80,13 +80,13 @@ typedef struct ParseRailwaySystemTopologyState {
   StrStart = StrEnd
 
 #define PARSE_LABEL_HEADER(HEADER)                                             \
-  static const char HEADER[] = #HEADER;                                        \
-  static const size_t HEADER##_LENGTH = sizeof(HEADER) - 1;                    \
+  static const c8 HEADER[] = #HEADER;                                        \
+  static const usize HEADER##_LENGTH = sizeof(HEADER) - 1;                    \
   StrStart = StrStart + HEADER##_LENGTH;                                       \
   if (strncmp(HEADER, StrStart - HEADER##_LENGTH, HEADER##_LENGTH) == 0)
 
 ParseRailwaySystemTopologyResult
-ParseRailwaySystemTopology(const char *const TopologyFilename,
+ParseRailwaySystemTopology(const c8 *const TopologyFilename,
                            RailwaySystemTopology *Topology) {
   FILE *F = fopen(TopologyFilename, "r");
   if (!F) {
@@ -94,7 +94,7 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
     exit(EXIT_FAILURE);
   }
 
-  char Line[256];
+  c8 Line[256];
 
   ParseRailwaySystemTopologyState State = {
       .Type = ParseRailwaySystemTopologyStateType_Start};
@@ -102,8 +102,8 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       ParseRailwaySystemTopologyResult_Success;
 
   while (fgets(Line, sizeof(Line), F)) {
-    const char *StrStart = SkipSpaces(Line);
-    const char *StrEnd = NULL;
+    const c8 *StrStart = SkipSpaces(Line);
+    const c8 *StrEnd = NULL;
 
     switch (State.Type) {
     case ParseRailwaySystemTopologyStateType_Error: {
@@ -168,7 +168,7 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
           FindNodeById(Topology->Nodes, RailwayNodeResult.Value);
       if (!ConnectedNode) {
         State.Type = ParseRailwaySystemTopologyStateType_Error;
-        printf("Error: Node %llu is not defined\n", RailwayNodeResult.Value);
+        printf("Error: Node %lu is not defined\n", RailwayNodeResult.Value);
         break;
       }
       Railway *R = RAII_New(Railway)(RailwayIdResult.Value, ConnectedNode);
@@ -207,13 +207,13 @@ ParseRailwaySystemTopology(const char *const TopologyFilename,
       Node *A = FindNodeById(Topology->Nodes, EdgeNodeAResult.Value);
       if (!A) {
         State.Type = ParseRailwaySystemTopologyStateType_Error;
-        printf("Error: Node %llu is not defined\n", EdgeNodeAResult.Value);
+        printf("Error: Node %lu is not defined\n", EdgeNodeAResult.Value);
         break;
       }
       Node *B = FindNodeById(Topology->Nodes, EdgeNodeBResult.Value);
       if (!B) {
         State.Type = ParseRailwaySystemTopologyStateType_Error;
-        printf("Error: Node %llu is not defined\n", EdgeNodeBResult.Value);
+        printf("Error: Node %lu is not defined\n", EdgeNodeBResult.Value);
         break;
       }
 

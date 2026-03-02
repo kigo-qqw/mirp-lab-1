@@ -2,6 +2,6 @@
 
 #include <string.h>
 
-void free_const_string(const char *const *const p) { free((void *)*p); }
+void FreeConstString(const c8 *const *const p) { free((void *)*p); }
 
-const char *NullToString() { return strdup("null"); }
+const c8 *NullToString(void) { return strdup("null"); }

@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "types.hpp"
+#include "types.h"
 
 #define VEC_INIT_CAPACITY 64
 

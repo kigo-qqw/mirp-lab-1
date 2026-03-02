@@ -28,12 +28,14 @@
  * считается полностью занятым, пока на нем находится хотя бы один вагон поезда.
  */
 
+#include "cli.h"
 #include "parser.h"
 #include "topology.h"
+#include "types.h"
 
 #define btoa(x) ((x) ? "true" : "false")
 
-int main(const int argc, const char *const *const argv) {
+i32 main(const i32 argc, const c8 *const *const argv) {
   RailwaySystemTopology Topology;
   const ParseRailwaySystemTopologyResult ParseResult =
       ParseRailwaySystemTopology(argv[1], &Topology);
@@ -49,5 +51,5 @@ int main(const int argc, const char *const *const argv) {
          btoa(RailwaySystemTopology_IsFullyConnected(&Topology)));
 
   RAII_Destroy(RailwaySystemTopology)(&Topology);
-  return 0;
+  return ExitStatus_SUCCESS;
 }

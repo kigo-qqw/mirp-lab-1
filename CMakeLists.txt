@@ -25,7 +25,21 @@ target_sources(mirp-lab-1 PRIVATE
         src/vector.c
         src/topology.c
         src/parser.c
+        src/cli.c
         src/main.c
+)
+
+target_compile_options(mirp-lab-1 PRIVATE
+        -Weverything
+
+        -Wno-extra-semi
+        -Wno-gnu-zero-variadic-macro-arguments
+        -Wno-declaration-after-statement
+        -Wno-unsafe-buffer-usage
+        -Wno-strict-prototypes
+        -Wno-padded
+        -Wno-implicit-void-ptr-cast
+        -Wno-switch-default
 )
 
 enable_testing()

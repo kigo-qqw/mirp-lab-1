@@ -5,13 +5,14 @@
     const T *const T = Self;                                                   \
     if (!T)                                                                    \
       return NullToString();                                                   \
-    char *Buffer = NULL;                                                       \
+    c8 *Buffer = NULL;                                                         \
     usize BufferSize = 0;                                                      \
                                                                                \
     DEFER_CLEANUP;                                                             \
                                                                                \
     while (true) {                                                             \
-      BufferSize = snprintf(Buffer, BufferSize, FMT, ##__VA_ARGS__) + 1;       \
+      BufferSize =                                                             \
+          (usize)snprintf(Buffer, BufferSize, FMT, ##__VA_ARGS__) + 1;         \
       if (Buffer)                                                              \
         return Buffer;                                                         \
       Buffer = malloc(BufferSize);                                             \

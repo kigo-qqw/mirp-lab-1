@@ -4,6 +4,7 @@
 
 #include "raii.h"
 #include "to_string.h"
+#include "types.h"
 #include "vector.h"
 
 typedef struct Node Node;
@@ -12,20 +13,20 @@ typedef struct Railway Railway;
 typedef struct RailwaySystemTopology RailwaySystemTopology;
 
 struct Edge {
-  usize Id;
+  u64 Id;
   Node *A;
   Node *B;
 };
 
 struct Node {
-  usize Id;
+  u64 Id;
   Vector(Edge *) Edges;
 };
 
 typedef Vector(Node *) NodeVector;
 
 struct Railway {
-  usize Id;
+  u64 Id;
   Node *ConnectedNode;
 };
 
@@ -35,16 +36,16 @@ struct RailwaySystemTopology {
   Vector(Railway *) Railways;
 };
 
-Node *FindNodeById(NodeVector Nodes, usize Id);
+Node *FindNodeById(NodeVector Nodes, u64 Id);
 
 TO_STRING_DECL(Node);
 TO_STRING_DECL(Edge);
 TO_STRING_DECL(Railway);
 TO_STRING_DECL(RailwaySystemTopology);
 
-RAII_DECL(Node, usize Id);
-RAII_DECL(Edge, usize Id, Node *A, Node *B);
-RAII_DECL(Railway, usize Id, Node *ConnectedNode);
+RAII_DECL(Node, u64 Id);
+RAII_DECL(Edge, u64 Id, Node *A, Node *B);
+RAII_DECL(Railway, u64 Id, Node *ConnectedNode);
 RAII_DECL(RailwaySystemTopology);
 
 bool RailwaySystemTopology_IsFullyConnected(const RailwaySystemTopology *Self);
