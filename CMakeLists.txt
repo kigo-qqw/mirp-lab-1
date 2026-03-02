@@ -33,6 +33,6 @@ enable_testing()
 add_test(
         NAME test-mirp-lab-1
         COMMAND $<TARGET_FILE:mirp-lab-1>
-        ${CMAKE_SOURCE_DIR}/assets/topology-1.txt
+        ${CMAKE_SOURCE_DIR}/assets/topology-2.txt
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )

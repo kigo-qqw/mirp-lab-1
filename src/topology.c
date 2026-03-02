@@ -92,3 +92,71 @@ RAII_Free_DEFINITION(Node);
 RAII_Free_DEFINITION(Edge);
 RAII_Free_DEFINITION(Railway);
 RAII_Free_DEFINITION(RailwaySystemTopology);
+
+bool RailwaySystemTopology_IsFullyConnected(
+    const RailwaySystemTopology *const Self) {
+  if (!Self)
+    return false;
+  if (Vector_Empty(Self->Railways))
+    return true;
+  if (Vector_Empty(Self->Nodes))
+    return false;
+
+  Vector(Node *) Visited;
+  Vector_Init(Visited);
+  Vector(Node *) Queue;
+  Vector_Init(Queue);
+
+  const Node *StartNode = Vector_At(Self->Railways, 0)->ConnectedNode;
+
+  Vector_Push(Queue, StartNode);
+  Vector_Push(Visited, StartNode);
+
+  // BFS
+  for (usize i = 0; i < Vector_Size(Queue); ++i) {
+    const Node *CN = Vector_At(Queue, i);
+
+    for (usize j = 0; j < Vector_Size(CN->Edges); ++j) {
+      const Edge *E = Vector_At(CN->Edges, j);
+      const Node *Neighbor = (E->A == CN) ? E->B : E->A;
+
+      bool AlreadyVisited = false;
+      for (usize k = 0; k < Vector_Size(Visited); ++k) {
+        if (Vector_At(Visited, k) == Neighbor) {
+          AlreadyVisited = true;
+          break;
+        }
+      }
+
+      if (!AlreadyVisited) {
+        Vector_Push(Visited, Neighbor);
+        Vector_Push(Queue, Neighbor);
+      }
+    }
+  }
+
+  bool AllReachable = true;
+
+  for (usize i = 0; i < Vector_Size(Self->Railways); ++i) {
+    const Railway *R = Vector_At(Self->Railways, i);
+    const Node *N = R->ConnectedNode;
+
+    bool Found = false;
+    for (usize j = 0; j < Vector_Size(Visited); ++j) {
+      if (Vector_At(Visited, j) == N) {
+        Found = true;
+        break;
+      }
+    }
+
+    if (!Found) {
+      AllReachable = false;
+      break;
+    }
+  }
+
+  Vector_Destroy(Visited);
+  Vector_Destroy(Queue);
+
+  return AllReachable;
+}

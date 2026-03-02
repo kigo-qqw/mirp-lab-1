@@ -46,3 +46,5 @@ RAII_DECL(Node, usize Id);
 RAII_DECL(Edge, usize Id, Node *A, Node *B);
 RAII_DECL(Railway, usize Id, Node *ConnectedNode);
 RAII_DECL(RailwaySystemTopology);
+
+bool RailwaySystemTopology_IsFullyConnected(const RailwaySystemTopology *Self);

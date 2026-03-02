@@ -31,6 +31,8 @@
 #include "parser.h"
 #include "topology.h"
 
+#define btoa(x) ((x) ? "true" : "false")
+
 int main(const int argc, const char *const *const argv) {
   RailwaySystemTopology Topology;
   const ParseRailwaySystemTopologyResult ParseResult =
@@ -43,7 +45,9 @@ int main(const int argc, const char *const *const argv) {
   String S = TO_STRING(RailwaySystemTopology)(&Topology);
   puts(S);
 
-  RAII_Destroy(RailwaySystemTopology)(&Topology);
+  printf("IsFullyConnected = %s\n",
+         btoa(RailwaySystemTopology_IsFullyConnected(&Topology)));
 
+  RAII_Destroy(RailwaySystemTopology)(&Topology);
   return 0;
 }
