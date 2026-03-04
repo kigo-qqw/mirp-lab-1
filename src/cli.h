@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "types.h"
+#include "to_string.h"
 
 typedef enum ExitStatus {
   ExitStatus_SUCCESS = 0,
@@ -17,7 +18,8 @@ typedef enum CommandLineArgumentsParseResult {
 } CommandLineArgumentsParseResult;
 
 typedef struct CommandLineArguments {
-  const char *TopologyFilePath;
+  const c8 *ProgramName;
+  const c8 *TopologyFilePath;
   bool Usage;
   bool Version;
 } CommandLineArguments;
@@ -27,3 +29,5 @@ void Usage(const c8 *ProgramName, ExitStatus Status);
 CommandLineArgumentsParseResult
 CommandLineArguments_Parse(CommandLineArguments *Self, i32 Argc,
                            const c8 *const *Argv);
+
+TO_STRING_DECL(CommandLineArguments);

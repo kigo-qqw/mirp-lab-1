@@ -37,22 +37,25 @@
 #error Provide VERSION as -DVERSION="<version>"
 #endif
 
-#define btoa(x) ((x) ? "true" : "false")
-
 i32 main(const i32 Argc, const c8 *const *const Argv) {
   CommandLineArguments Args;
   const CommandLineArgumentsParseResult CliParseResult =
       CommandLineArguments_Parse(&Args, Argc, Argv);
 
+#ifndef NDEBUG
+  String ArgsAsString = TO_STRING(CommandLineArguments)(&Args);
+  puts(ArgsAsString);
+#endif
+
   if (Args.Usage) {
-    Usage(Argv[0], ExitStatus_SUCCESS);
+    Usage(Args.ProgramName, ExitStatus_SUCCESS);
   }
   if (Args.Version) {
     printf("mirp-lab-1 %s\n", VERSION);
     exit(ExitStatus_SUCCESS);
   }
   if (CliParseResult != CommandLineArgumentsParseResult_SUCCESS) {
-    Usage(Argv[0], ExitStatus_FAILURE);
+    Usage(Args.ProgramName, ExitStatus_FAILURE);
   }
 
   RailwaySystemTopology Topology;

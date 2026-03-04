@@ -36,17 +36,25 @@ target_sources(mirp-lab-1 PRIVATE
         src/main.c
 )
 
-target_compile_options(mirp-lab-1 PRIVATE
-        -Weverything
+if (CMAKE_C_COMPILER_ID MATCHES "Clang")
+    target_compile_options(mirp-lab-1 PRIVATE
+            -Weverything
 
-        -Wno-extra-semi
-        -Wno-gnu-zero-variadic-macro-arguments
-        -Wno-declaration-after-statement
-        -Wno-unsafe-buffer-usage
-        -Wno-strict-prototypes
-        -Wno-padded
-        -Wno-implicit-void-ptr-cast
-        -Wno-switch-default
+            -Wno-extra-semi
+            -Wno-gnu-zero-variadic-macro-arguments
+            -Wno-declaration-after-statement
+            -Wno-unsafe-buffer-usage
+            -Wno-strict-prototypes
+            -Wno-padded
+            -Wno-implicit-void-ptr-cast
+            -Wno-switch-default
+    )
+endif ()
+
+target_compile_options(mirp-lab-1 PRIVATE
+        -Wall
+        -Wextra
+        # -Werror
 )
 
 target_compile_definitions(mirp-lab-1 PRIVATE VERSION="${GIT_HASH}")

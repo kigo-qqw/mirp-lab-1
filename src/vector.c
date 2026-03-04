@@ -10,7 +10,6 @@
 char *Vector_ToString_Generic(const void *Data, const usize Size,
                               const usize ElementSize,
                               const char *(*ToString)(const void *)) {
-
   if (!Data)
     return strdup("null");
   if (Size == 0)
@@ -25,7 +24,7 @@ char *Vector_ToString_Generic(const void *Data, const usize Size,
     if (i > 0)
       TotalBufferSize += sizeof(ELEMENT_DELIMITER) - 1;
 
-    const void *Element = ((const void **)Data)[i];
+    const void *Element = *(const void **)((const c8 *)Data + i * ElementSize);
     ElementsAsStrings[i] = ToString(Element);
     TotalBufferSize += strlen(ElementsAsStrings[i]);
   }

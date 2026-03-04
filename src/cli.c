@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "to_string_impl.h"
+
 static const c8 *const ShortOptions = "huv";
 
 static struct option LongOptions[] = {{"help", no_argument, NULL, 'h'},
@@ -27,12 +29,13 @@ CommandLineArguments_Parse(CommandLineArguments *const Self, const i32 Argc,
                            const c8 *const *const Argv) {
   Self->Usage = false;
   Self->Version = false;
+  Self->ProgramName = Argv[0];
   Self->TopologyFilePath = NULL;
 
   i32 OptionCharacter;
   i32 OptionIndex;
-  while ((OptionCharacter = getopt_long(Argc, Argv, ShortOptions, LongOptions,
-                                        &OptionIndex)) != -1) {
+  while ((OptionCharacter = getopt_long(Argc, (c8 *const *)Argv, ShortOptions,
+                                        LongOptions, &OptionIndex)) != -1) {
     switch (OptionCharacter) {
     case 'v': {
       Self->Version = true;
@@ -56,3 +59,11 @@ CommandLineArguments_Parse(CommandLineArguments *const Self, const i32 Argc,
 
   return CommandLineArgumentsParseResult_SUCCESS;
 }
+
+TO_STRING_DEFINITION(CommandLineArguments, {},
+                     "CommandLineArguments{ProgramName=%s, "
+                     "TopologyFilePath=%s, Usage=%s, Version=%s}",
+                     CommandLineArguments->ProgramName,
+                     CommandLineArguments->TopologyFilePath,
+                     btoa(CommandLineArguments->Usage),
+                     btoa(CommandLineArguments->Version));

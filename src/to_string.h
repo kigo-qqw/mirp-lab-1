@@ -19,3 +19,5 @@ void FreeConstString(const c8 *const *p);
 typedef const c8 *(*ToString)(const void *);
 
 const c8 *NullToString(void);
+
+#define btoa(x) ((x) ? "true" : "false")
